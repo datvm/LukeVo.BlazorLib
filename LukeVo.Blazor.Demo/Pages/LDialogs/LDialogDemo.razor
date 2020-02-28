@@ -1,0 +1,39 @@
+﻿@page "/Demo/Dialog"
+
+@inject ILDialogService dialogService;
+
+<article>
+    <header>
+        <h1>LDialog Demo</h1>
+        <p>Use the following buttons to try different dialogs</p>
+    </header>
+
+    <main>
+        <section>
+            <p>
+                A confirm text box
+            </p>
+
+            <p>
+                <button @onclick="this.ShowDialog" class="btn btn-primary">Show Confirm Textbox</button>
+            </p>
+
+        </section>
+    </main>
+</article>
+
+@code {
+
+    async Task ShowDialog()
+    {
+        var diagConfirm = new LConfirmDialog()
+        {
+            Title = "Title",
+            Text = "Hello",
+        };
+
+        var result = await this.dialogService.ShowAsync(diagConfirm);
+        Console.WriteLine(result.Confirm);
+    }
+
+}

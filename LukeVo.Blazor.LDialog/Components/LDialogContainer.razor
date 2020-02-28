@@ -1,0 +1,39 @@
+﻿@namespace LukeVo.Blazor.LDialog
+@inject ILDialogInternalService dialogService;
+
+<ldialog data-active="@(this.IsShowing)">
+    <ldialog-cover></ldialog-cover>
+
+    <ldialog-container>
+        @if (this.contentFragment != null)
+        {
+            @(this.contentFragment)
+        }
+    </ldialog-container>
+</ldialog>
+
+@code {
+
+    public bool IsShowing { get; internal set; }
+
+    RenderFragment contentFragment { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        this.dialogService.SetContainerComponent(this);
+    }
+
+    internal void SetFragments(RenderFragment fragment)
+    {
+        this.contentFragment = fragment;
+        this.StateHasChanged();
+    }
+
+    internal void Close()
+    {
+        this.contentFragment = null;
+        this.IsShowing = false;
+        this.StateHasChanged();
+    }
+
+}

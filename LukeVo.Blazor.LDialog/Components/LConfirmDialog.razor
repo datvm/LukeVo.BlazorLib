@@ -1,0 +1,38 @@
+﻿@namespace LukeVo.Blazor.LDialog
+
+@inherits LDialogBase
+
+@if (this.Title != null)
+{
+    <header>
+        <h2>@(this.Title)</h2>
+    </header>
+}
+
+@if (this.Text != null)
+{
+    <main>
+        @(this.Text)
+    </main>
+}
+
+<footer>
+    <p class="text-right">
+        <button class="btn btn-primary" @onclick="this.onOkButtonClick">OK</button>
+    </p>
+</footer>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    void onOkButtonClick()
+    {
+        this.OnConfirm(true);
+    }
+
+}

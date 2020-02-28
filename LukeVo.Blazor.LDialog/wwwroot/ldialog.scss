@@ -1,0 +1,40 @@
+﻿@mixin fill() {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+ldialog {
+    --cover-bg-color: rgba(0,0,0,.8);
+    --z-index: 100;
+    --border: 1px solid #dddddd;
+    --border-radius: .5rem;
+    --background: white;
+    --padding: 1rem;
+
+    @include fill();
+    position: fixed;
+    z-index: var(--z-index);
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    > ldialog-cover {
+        @include fill();
+        position: absolute;
+        z-index: -1;
+        background-color: var(--cover-bg-color);
+    }
+
+    > ldialog-container {
+        border: var(--border);
+        border-radius: var(--border-radius);
+        background: var(--background);
+        padding: var(--padding);
+    }
+
+    &[data-active] {
+        display: flex;
+    }
+}
