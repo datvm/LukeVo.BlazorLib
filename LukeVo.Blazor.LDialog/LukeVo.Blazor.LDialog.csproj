@@ -3,6 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <Authors>Luke Vo</Authors>
+    <Company>BibliTech</Company>
+    <Product>LDialog</Product>
+    <Description>A Blazor component for showing Dialog that support highly customized content.</Description>
+    <Copyright>Copyright (c) 2020 Luke Vo</Copyright>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/datvm/LukeVo.BlazorLib</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/datvm/LukeVo.BlazorLib</RepositoryUrl>
+    <PackageTags>blazor,dialog,component,.net core</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
