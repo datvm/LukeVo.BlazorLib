@@ -1,23 +1,28 @@
 ﻿@namespace LukeVo.Blazor.LDialog
 
+@typeparam TResult
+
 @inject ILDialogInternalService dialogService;
 
 @code {
 
-    protected void Close<T>(bool confirm, T result)
+    [Parameter]
+    public bool IsShowing { get; set; }
+
+    protected void Close(bool confirm, TResult result)
     {
+        this.dialogService.CloseDialog();
+
         this.dialogService.SetConfirm(confirm);
         this.dialogService.SetResult(result);
-
-        this.dialogService.CloseDialog();
     }
 
-    protected void OnCancel<TResult>()
+    protected void OnCancel()
     {
         this.Close(false, default(TResult));
     }
 
-    protected void OnConfirm<TResult>(TResult result)
+    protected void OnConfirm(TResult result)
     {
         this.Close(true, result);
     }

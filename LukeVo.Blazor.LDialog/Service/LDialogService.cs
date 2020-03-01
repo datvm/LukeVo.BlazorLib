@@ -15,28 +15,15 @@ namespace LukeVo.Blazor.LDialog
         LDialogContainer container;
         TaskCompletionSource<bool> confirmTcs;
         TaskCompletionSource<object> resultTcs;
-
-        public Task<LDialogResult<bool?>> ShowAsync<TDialogComponent>()
-            where TDialogComponent : LDialogBase, new()
+        
+        public Task<LDialogResult<TResult>> ShowAsync<TResult, TDialog>()
+            where TDialog : LDialogBase<TResult>, new()
         {
-            return this.ShowAsync<TDialogComponent, bool?>();
+            var component = new TDialog();
+            return this.ShowAsync(component);
         }
 
-        public Task<LDialogResult<bool?>> ShowAsync<TDialogComponent>(TDialogComponent component)
-            where TDialogComponent : LDialogBase
-        {
-            return this.ShowAsync<TDialogComponent, bool?>(component);
-        }
-
-        public Task<LDialogResult<TResult>> ShowAsync<TDialogComponent, TResult>()
-            where TDialogComponent : LDialogBase, new()
-        {
-            var component = new TDialogComponent();
-            return this.ShowAsync<TDialogComponent, TResult>(component);
-        }
-
-        public async Task<LDialogResult<TResult>> ShowAsync<TDialogComponent, TResult>(TDialogComponent component)
-            where TDialogComponent : LDialogBase
+        public async Task<LDialogResult<TResult>> ShowAsync<TResult>(LDialogBase<TResult> component)
         {
             var properties = component.GetType().GetProperties();
 
@@ -56,6 +43,8 @@ namespace LukeVo.Blazor.LDialog
                     builder.AddAttribute(0, property.Name, value);
                 }
 
+                builder.AddAttribute(0, "IsShowing", true);
+
                 builder.CloseComponent();
             };
 
@@ -71,7 +60,7 @@ namespace LukeVo.Blazor.LDialog
             return new LDialogResult<TResult>()
             {
                 Confirm = confirm,
-                Result = (TResult)(object)result,
+                Value = (TResult)(object)result,
             };
         }
 

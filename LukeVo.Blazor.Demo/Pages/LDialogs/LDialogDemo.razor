@@ -1,6 +1,7 @@
 ﻿@page "/Demo/Dialog"
 
 @inject ILDialogService dialogService;
+@inject IJsService jsService;
 
 <article>
     <header>
@@ -8,32 +9,306 @@
         <p>Use the following buttons to try different dialogs</p>
     </header>
 
-    <main>
-        <section>
+    <hr />
+
+    <main class="grid-demo">
+        <section class="demo">
+            <h2>Setup</h2>
+
             <p>
-                A confirm text box
+                To use this library, you will need to add service
+                in the startup code and use the service in the Component.
+            </p>
+        </section>
+        <section class="code">
+            <p>In the <code>Program.cs</code> file, add this:</p>
+
+            <pre data-highlight><code>var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+builder.Services
+    .AddLDialog();
+
+// Other services
+
+builder.RootComponents.Add&lt;App&gt;("app");</code></pre>
+
+            <p>In the <code>MainLayout</code> or somewhere at the HTML body, put a <code>LDialogContainer</code> element:</p>
+
+            <pre data-highlight><code>&lt;LDialogContainer /&gt;</code></pre>
+
+            <p>In the Component that you need to show the Dialog, inject the service:</p>
+
+            <pre data-highlight><code>@@inject ILDialogService dialogService;</code></pre>
+        </section>
+
+        <hr />
+
+        <section class="demo">
+            <h2>Alert Dialog</h2>
+
+            <p>
+                A confirm message box with text and icon and Close button
             </p>
 
             <p>
-                <button @onclick="this.ShowDialog" class="btn btn-primary">Show Confirm Textbox</button>
+                <button @onclick="this.ShowDialog1" class="btn btn-primary">Show Message Box</button>
             </p>
 
+            <LConfirmDialog Text="Thank you for using this awesome"
+                            Title="LDialog"
+                            Icon="/img/mark.png"
+                            ConfirmButtonText="Close"
+                            @ref="this.diag1" />
+
+            @if (this.diag1Closed)
+            {
+                <p class="text-success">You closed the dialog</p>
+            }
+        </section>
+
+        <section class="code">
+            <p>You can declare a built-in <code>LConfirmDialog</code></p>
+
+            <pre data-highlight><code>&lt;LConfirmDialog Text=&quot;Thank you for using this awesome&quot;
+                Title=&quot;LDialog&quot;
+                Icon=&quot;/img/mark.png&quot;
+                ConfirmButtonText=&quot;Close&quot;
+                @@ref=&quot;this.diag1&quot; /&gt;
+
+@@if (this.diag1Closed)
+{
+    &lt;p class=&quot;text-success&quot;&gt;You closed the dialog&lt;/p&gt;
+}</code></pre>
+
+            <p>And when you need to show the dialog:</p>
+
+            <pre data-highlight><code>LConfirmDialog diag1;
+bool diag1Closed { get; set; } = false;
+
+async Task ShowDialog1()
+{
+    this.diag1Closed = false;
+    await this.dialogService.ShowAsync(diag1);
+    this.diag1Closed = true;
+}</code></pre>
+        </section>
+
+        <hr />
+
+        <section class="demo">
+            <h2>Confirm Dialog</h2>
+
+            <p>
+                A Yes/No confirm box
+            </p>
+
+            <p>
+                <button @onclick="this.ShowDialog2" class="btn btn-primary">Show Confirm Box</button>
+            </p>
+
+            <LConfirmDialog Text="You will delete this file forever"
+                            Title="Are you sure?"
+                            Icon="/img/warning.png"
+                            ConfirmButtonText="Yes, Delete"
+                            ConfirmButtonCssClass="btn btn-danger"
+                            CancelButtonText="No"
+                            CancelButtonCssClass="btn btn-dark"
+                            @ref="this.diag2" />
+        </section>
+
+        <section class="code">
+            <p>You can also show a second button by setting its <code>CancelButtonText</code> property. You can also set their CSS classes too.</p>
+
+            <pre data-highlight><code>&lt;LConfirmDialog Text=&quot;You will delete this file forever&quot;
+                Title=&quot;Are you sure?&quot;
+                Icon=&quot;/img/warning.png&quot;
+                ConfirmButtonText=&quot;Yes, Delete&quot;
+                ConfirmButtonCssClass=&quot;btn btn-danger&quot;
+                CancelButtonText=&quot;No&quot;
+                CancelButtonCssClass=&quot;btn btn-dark&quot;
+                @@ref=&quot;this.diag2&quot; /&gt;</code></pre>
+
+            <p>
+                The result of <code>ShowAsync</code> method is a <code>LDialogResult</code>. In this case, we use <code>Confirm</code> property only
+                that determine which button the user chose. In the following example, you can see you can also use a <code>LConfirmDialog</code>
+                without actually write them in the Component code but VS will show warning that Parameters should not be set like that (you can safely ignore it).
+            </p>
+
+            <pre data-highlight><code>async Task ShowDialog2()
+{
+    var result = await this.dialogService.ShowAsync(diag2);
+
+    if (result.Confirm)
+    {
+        await this.dialogService.ShowAsync(new LConfirmDialog()
+        {
+            Text = "File Deleted!",
+            Title = "Operation completed",
+            Icon = "/img/mark.png",
+        });
+    }
+}</code></pre>
+
+        </section>
+
+        <hr />
+
+        <section class="demo">
+            <h2>Prompt Dialog</h2>
+
+            <p>
+                A prompt (input) box with a message and icon and two buttons.
+            </p>
+
+            <p>
+                <button @onclick="this.ShowDialog3" class="btn btn-primary">Show Prompt Box</button>
+            </p>
+
+            <p class="text-success">
+                @if (this.diag3Name == null)
+                {
+                    <text>Please click the button above and tell me your name</text>
+                }
+                else
+                {
+                    <text>Welcome, @(this.diag3Name)!</text>
+                }
+            </p>
+
+            <LPromptDialog Text="Please enter your name"
+                           Title="Welcome!"
+                           Icon="/img/name.png"
+                           InitialValue="Player 1"
+                           @ref="this.diag3" />
+        </section>
+
+        <section class="code">
+            <p>For this one you should use the built-in <code>LPromptDialog</code> like this:</p>
+
+            <pre data-highlight><code>&lt;p class=&quot;text-success&quot;&gt;
+    @@if (this.diag3Name == null)
+    {
+        &lt;text&gt;Please click the button above and tell me your name&lt;/text&gt;
+    }
+    else
+    {
+        &lt;text&gt;Welcome, @@(this.diag3Name)!&lt;/text&gt;
+    }
+&lt;/p&gt;
+
+&lt;LPromptDialog Text=&quot;Please enter your name&quot;
+               Title=&quot;Welcome!&quot;
+               Icon=&quot;/img/name.png&quot;
+               InitialValue=&quot;Player 1&quot;
+               @@ref=&quot;this.diag3&quot; /&gt;</code></pre>
+
+            <p>For the result, the return object will also has <code>Value</code> property set to the value user entered if it's Confirmed:</p>
+
+            <pre data-highlight><code>async Task ShowDialog3()
+{
+    var result = await this.dialogService.ShowAsync(this.diag3);
+
+    if (!result.Confirm || string.IsNullOrWhiteSpace(result.Value))
+    {
+        this.diag3Name = null;
+    }
+    else
+    {
+        this.diag3Name = result.Value;
+    }
+}</code></pre>
+        </section>
+
+        <hr />
+
+        <section class="demo">
+            <h2>Custom Dialog</h2>
+
+            <p>You can also build your own Dialog Component with custom logics as well.</p>
+
+            <p>
+                <button class="btn btn-primary" @onclick="this.ShowDialog4">Show Custom Dialog</button>
+            </p>
+
+            @if (this.diag4Post == null)
+            {
+                <p>Click the above button to get your post!</p>
+            }
+            else
+            {
+                <h4>@(this.diag4Post.Title)</h4>
+                <pre>@(this.diag4Post.Body)</pre>
+            }
+
+        </section>
+
+        <section class="code">
         </section>
     </main>
 </article>
 
 @code {
 
-    async Task ShowDialog()
-    {
-        var diagConfirm = new LConfirmDialog()
-        {
-            Title = "Title",
-            Text = "Hello",
-        };
+    LConfirmDialog diag1, diag2;
+    LPromptDialog diag3;
 
-        var result = await this.dialogService.ShowAsync(diagConfirm);
-        Console.WriteLine(result.Confirm);
+    bool diag1Closed { get; set; }
+    string diag3Name { get; set; }
+    CustomDialog.PostInfo diag4Post { get; set; }
+
+    async Task ShowDialog1()
+    {
+        this.diag1Closed = false;
+        await this.dialogService.ShowAsync(this.diag1);
+        this.diag1Closed = true;
+    }
+
+    async Task ShowDialog2()
+    {
+        var result = await this.dialogService.ShowAsync(this.diag2);
+
+        if (result.Confirm)
+        {
+            await this.dialogService.ShowAsync(new LConfirmDialog()
+            {
+                Text = "File Deleted!",
+                Title = "Operation completed",
+                Icon = "/img/mark.png",
+            });
+        }
+    }
+
+    async Task ShowDialog3()
+    {
+        var result = await this.dialogService.ShowAsync(this.diag3);
+
+        if (!result.Confirm || string.IsNullOrWhiteSpace(result.Value))
+        {
+            this.diag3Name = null;
+        }
+        else
+        {
+            this.diag3Name = result.Value;
+        }
+    }
+
+    async Task ShowDialog4()
+    {
+        var result = await this.dialogService.ShowAsync<CustomDialog.PostInfo, CustomDialog>();
+
+        if (result.Confirm)
+        {
+            this.diag4Post = result.Value;
+        }
+        else
+        {
+            this.diag4Post = null;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        this.jsService.HighlighAllCodes();
     }
 
 }

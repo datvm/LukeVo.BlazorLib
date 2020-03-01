@@ -1,0 +1,123 @@
+﻿@inherits LDialogBase<CustomDialog.PostInfo>
+
+@inject HttpClient httpClient;
+
+<header class="ldialog-header">
+    <h2>Edit Post Info</h2>
+</header>
+
+<EditForm Model="@this.post" OnValidSubmit="OnHandleSubmit">
+    <main class="ldialog-main">
+        @if (this.isLoading)
+        {
+            <p class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </p>
+        }
+        else
+        {
+            <DataAnnotationsValidator />
+
+            <div class="text-danger">
+                <ValidationSummary />
+
+                @if (this.customError != null)
+                {
+                    <p>@(this.customError)</p>
+                }
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Id</label>
+                <div class="col">
+                    <InputNumber @bind-Value="this.post.Id" disabled class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Title</label>
+                <div class="col">
+                    <InputText @bind-Value="this.post.Title" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Body</label>
+                <div class="col">
+                    <InputTextArea @bind-Value="this.post.Body" class="form-control" />
+                </div>
+            </div>
+        }
+    </main>
+
+    <footer class="ldialog-footer text-right">
+        @if (!this.isLoading)
+        {
+            <button class="btn btn-primary">Save and Close</button>
+        }
+
+        <button @onclick="OnCancelButtonClick" class="btn btn-light">Cancel and Return</button>
+    </footer>
+
+</EditForm>
+
+@code {
+
+    string customError { get; set; }
+    bool isLoading { get; set; } = true;
+    PostInfo post = new PostInfo();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fake server time
+        await Task.Delay(1000);
+
+        this.post = await this.httpClient.GetJsonAsync<PostInfo>(
+            "https://jsonplaceholder.typicode.com/posts/1");
+
+        this.isLoading = false;
+    }
+
+    bool shouldFakeFail = true;
+    async Task OnHandleSubmit()
+    {
+        // Fake a request, and fail to demonstrate
+        this.customError = null;
+        this.isLoading = true;
+
+        await Task.Delay(1000);
+        if (shouldFakeFail)
+        {
+            this.customError = "Network error.";
+            shouldFakeFail = false;
+        }
+        else
+        {
+            this.OnConfirm(this.post);
+        }
+
+        this.isLoading = false;
+    }
+
+    void OnCancelButtonClick()
+    {
+        this.OnCancel();
+    }
+
+    // This model class should be in a dedicated file.
+    // This demo put it here so you can see how it works.
+    public class PostInfo
+    {
+
+        public int Id { get; set; }
+
+        [Required, StringLength(10, ErrorMessage = "Title is too long.")]
+        public string Title { get; set; }
+
+        [Required]
+        public string Body { get; set; }
+    }
+
+}

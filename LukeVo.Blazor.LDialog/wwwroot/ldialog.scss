@@ -5,13 +5,17 @@
     height: 100vh;
 }
 
-ldialog {
+.ldialog {
     --cover-bg-color: rgba(0,0,0,.8);
     --z-index: 100;
-    --border: 1px solid #dddddd;
+    --border: 1px solid rgba(0,0,0,.2);
     --border-radius: .5rem;
     --background: white;
     --padding: 1rem;
+    --separator-border: 1px solid #dee2e6;
+    --width: 80vw;
+    --max-width: 600px;
+    --icon-size: 5rem;
 
     @include fill();
     position: fixed;
@@ -20,18 +24,57 @@ ldialog {
     align-items: center;
     justify-content: center;
 
-    > ldialog-cover {
+    .ldialog-cover {
         @include fill();
         position: absolute;
         z-index: -1;
         background-color: var(--cover-bg-color);
     }
 
-    > ldialog-container {
+    .ldialog-container {
         border: var(--border);
         border-radius: var(--border-radius);
         background: var(--background);
-        padding: var(--padding);
+        width: var(--width);
+        max-width: var(--max-width);
+
+        .ldialog-header {
+            padding: var(--padding);
+            border-bottom: var(--separator-border);
+        }
+
+        .ldialog-main {
+            padding: var(--padding);
+            text-align: center;
+
+            img.icon {
+                display: block;
+                margin: 0 auto;
+                height: var(--icon-size);
+                margin-bottom: var(--padding);
+            }
+        }
+
+        .ldialog-footer {
+            padding: var(--padding);
+            border-top: var(--separator-border);
+        }
+
+        .prompt-input {
+            display: block;
+            width: 100%;
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
     }
 
     &[data-active] {

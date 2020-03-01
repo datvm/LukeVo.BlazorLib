@@ -1,10 +1,10 @@
 ﻿@namespace LukeVo.Blazor.LDialog
 @inject ILDialogInternalService dialogService;
 
-<ldialog data-active="@(this.IsShowing)">
-    <ldialog-cover></ldialog-cover>
+<ldialog class="ldialog" data-active="@(this.IsShowing)">
+    <ldialog-cover class="ldialog-cover"></ldialog-cover>
 
-    <ldialog-container>
+    <ldialog-container class="ldialog-container">
         @if (this.contentFragment != null)
         {
             @(this.contentFragment)

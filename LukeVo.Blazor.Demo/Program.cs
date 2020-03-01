@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Text;
 using Microsoft.AspNetCore.Blazor.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using LukeVo.Blazor.Demo.Services;
 
 namespace LukeVo.Blazor.Demo
 {
@@ -14,7 +15,8 @@ namespace LukeVo.Blazor.Demo
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
             builder.Services
-                .AddLDialog();
+                .AddLDialog()
+                .AddSingleton<IJsService, JsService>();
 
             builder.RootComponents.Add<App>("app");
 

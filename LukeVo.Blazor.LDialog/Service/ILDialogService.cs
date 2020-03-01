@@ -7,15 +7,8 @@ namespace LukeVo.Blazor.LDialog
 {
     public interface ILDialogService
     {
-        Task<LDialogResult<bool?>> ShowAsync<TDialogComponent>()
-            where TDialogComponent : LDialogBase, new();
-        Task<LDialogResult<bool?>> ShowAsync<TDialogComponent>(TDialogComponent component)
-            where TDialogComponent : LDialogBase;
-
-        Task<LDialogResult<TResult>> ShowAsync<TDialogComponent, TResult>()
-            where TDialogComponent : LDialogBase, new();
-        Task<LDialogResult<TResult>> ShowAsync<TDialogComponent, TResult>(TDialogComponent component)
-            where TDialogComponent : LDialogBase;
+        Task<LDialogResult<TResult>> ShowAsync<TResult, TDialog>() where TDialog : LDialogBase<TResult>, new();
+        Task<LDialogResult<TResult>> ShowAsync<TResult>(LDialogBase<TResult> component);
     }
 
     internal interface ILDialogInternalService : ILDialogService

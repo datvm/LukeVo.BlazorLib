@@ -9,7 +9,7 @@ namespace LukeVo.Blazor.LDialog.Models
     public class LDialogResult<T>
     {
         public bool Confirm { get; set; }
-        public T Result { get; set; }
+        public T Value { get; set; }
     }
 
 }

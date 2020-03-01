@@ -1,6 +1,6 @@
 ﻿@namespace LukeVo.Blazor.LDialog
 
-@inherits LDialogBase<bool>
+@inherits LDialogBase<string>
 
 @if (!this.IsShowing)
 {
@@ -14,17 +14,26 @@
     </header>
 }
 
-@if (this.Text != null)
-{
-    <main class="ldialog-main">
-        @if (this.Icon != null)
-        {
-            <img class="icon" src="@(this.Icon)" />
-        }
 
-        @(this.Text)
-    </main>
-}
+<main  class="ldialog-main">
+    @if (this.Icon != null)
+    {
+        <img class="icon" src="@(this.Icon)" />
+    }
+
+    @if (this.Text != null)
+    {
+        <p>
+            @(this.Text)
+        </p>
+    }
+
+    <p>
+        <input autofocus class="prompt-input" type="@(this.InputType)" @bind="this.value" />
+    </p>
+
+</main>
+
 
 <footer class="ldialog-footer">
     <p class="text-right">
@@ -57,7 +66,7 @@
     public string ConfirmButtonText { get; set; } = "OK";
 
     [Parameter]
-    public string CancelButtonText { get; set; } = null;
+    public string CancelButtonText { get; set; } = "Cancel";
 
     [Parameter]
     public string Icon { get; set; }
@@ -68,9 +77,22 @@
     [Parameter]
     public string CancelButtonCssClass { get; set; } = "btn btn-light";
 
+    [Parameter]
+    public string InputType { get; set; } = "text";
+
+    [Parameter]
+    public string InitialValue { get; set; } = "";
+
+    string value { get; set; }
+
+    protected override void OnInitialized()
+    {
+        this.value = this.InitialValue;
+    }
+
     void onOkButtonClick()
     {
-        this.OnConfirm(true);
+        this.OnConfirm(this.value);
     }
 
     void onCancelButtonClick()
